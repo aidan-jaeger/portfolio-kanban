@@ -10,6 +10,7 @@ const middlewares = [
     console.log(`${new Date().toISOString()}\t${req.method}\t${req.url}`)
     rext()
   },
+  router,
 ]
 
 const server = http.createServer((req, res) => {

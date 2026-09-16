@@ -18,7 +18,7 @@ export async function writeTempFile(data, attempt = 1) {
   catch(err) {
     if (err.code === 'EEXIST') {
       console.warn('File collision detected, retrying with new name')
-      return await writeTempFile(data, attempt++)
+      return await writeTempFile(data, attempt + 1)
     }
     throw err
   } 

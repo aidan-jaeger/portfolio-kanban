@@ -20,7 +20,6 @@ async function getUsersJSON() {
   }
   return parsedData
 }
-
 async function atomicWriteJSON(data) {
   const payload = JSON.stringify(data, null, 2)
   const tempFilePath = await writeTempFile(targetDirPath, payload)
@@ -41,45 +40,32 @@ export const UserModel = {
     const currentData = await getUsersJSON()
     
     currentData.push(newUser)
-    atomicWriteJSON(currentData)
-    console.log(`Created new user`)
+    await atomicWriteJSON(currentData)
+    return newUser
   },
   read: async (id) => {
     const currentData = await getUsersJSON()
-    const targetUser = currentData.find(user => user.id === id)
-    if (targetUser) {
-      console.log(`Read user by id: ${id}`)
-      return targetUser
-    }
-    else {
-      throw new Error('A user does not exist with the specified ID')
-    }
+    return currentData.find(user => user.id === id) || null
   },
   update: async (id, data) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) {
-      const oldData = currentData[userIndex]
-      currentData[userIndex] = { id: id, ...oldData, ...data}
-      atomicWriteJSON(currentData)
-      console.log(`Updated user by id: ${id}`)
-    }
-    else {
-      throw new Error('A user does not exist with the specified ID')
-    }
+    if (userIndex !== -1) return null
+    
+    const oldData = currentData[userIndex]
+    const newData = { ...oldData, ...data, id: id }
+    currentData[userIndex] = newData
+
+    await atomicWriteJSON(currentData)
+    return true
   },
   delete: async (id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) {
-      currentData.splice(userIndex, 1)
-      atomicWriteJSON(currentData)
-      console.log(`Deleted user by id: ${id}`)
-    }
-    else {
-      throw new Error('A user does not exist with the specified ID')
-    }
+    if (userIndex !== -1) return null
+    
+    currentData.splice(userIndex, 1)
+    await atomicWriteJSON(currentData)
+    return true
   },
 }
-//TODO rewrite id requesting functions to take JWT auth?
-UserModel.delete('3a1c5137-40d3-40ae-9b0c-60856496747d')

@@ -16,6 +16,7 @@ const middlewares = [
 const server = http.createServer(async (req, res) => {
   let index = 0
 
+  //scoped in createServer to isolate execution state per request
   async function next() {
     if (index >= middlewares.length)
       return JsonView(res, 404, 'Resource Not Found')

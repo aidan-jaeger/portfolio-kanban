@@ -47,6 +47,9 @@ export const UserModel = {
     const currentData = await getUsersJSON()
     return currentData.find(user => user.id === id) || null
   },
+  readAll: async () => {
+    return await getUsersJSON()
+  },
   update: async (id, data) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)

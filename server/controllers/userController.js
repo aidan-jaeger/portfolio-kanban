@@ -30,6 +30,16 @@ export const UserController = {
       JSONView.renderError(res, 404, 'No user found with given ID')
     }
   },
+  readAll: async (req, res) => {
+    const users = await UserModel.readAll()
+    if (users) {
+      JSONView.render(res, 200, users)
+    }
+    else {
+      console.warn('No users dound in database.')
+      JSONView.renderError(res, 404, 'No users dound in database.')
+    }
+  },
   update: async (req, res, id) => {
     const { name = '', email = '', password = ''} = parseReqBody(req)
     

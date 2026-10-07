@@ -4,23 +4,23 @@ import { JSONView } from './views/jsonView.js'
 export function router(req, res, next) {
   const url = req.url
   const method = req.method
-  const idProvided = url.match(/\/api\/users\/([\w]+)/)
+  const idProvided = url.split('/').pop()
 
-  console.log('routing...')
+  console.log('routing...', idProvided)
   if (url === '/api/users') {
     if (method === 'GET') {
       return idProvided
-      ?  UserController.readAll(req, res, idProvided[1]) //[1] is regex uuid capture group
+      ?  UserController.readAll(req, res, idProvided)
       :  UserController.read(req, res) 
     }
     if (method === 'POST') {
       return idProvided
-      ? UserController.create(req, res, idProvided[1])
+      ? UserController.create(req, res, idProvided)
       : UserController.create(req, res)
     }
     if (method === 'PUT') {
       return idProvided
-      ? UserController.update(req, res, idProvided[1])
+      ? UserController.update(req, res, idProvided)
       : UserController.update(req, res)
     }
     if (method === 'DELETE') {

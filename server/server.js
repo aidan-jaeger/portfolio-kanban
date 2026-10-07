@@ -1,6 +1,6 @@
 import http from 'node:http'
-import router from './router.js'
-import JSONView from './views/jsonView.js'
+import { router } from './router.js'
+import { JSONView } from './views/jsonView.js'
 
 const PORT = process.env.PORT || 3500
 

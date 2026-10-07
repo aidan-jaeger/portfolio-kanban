@@ -1,4 +1,4 @@
-const JSONView = {
+export const JSONView = {
   // Format successful data responses
   render: (res, statusCode, data) => {
     res.writeHead(statusCode, { 'Content-Type': 'application/json' })

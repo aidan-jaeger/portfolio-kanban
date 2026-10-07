@@ -1,5 +1,5 @@
-import { UserController } from './controllers/userController'
-import JSONView from '/views/jsonView.js'
+import { UserController } from './controllers/userController.js'
+import { JSONView } from './views/jsonView.js'
 
 export function router(req, res, next) {
   const url = req.url

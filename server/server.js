@@ -27,7 +27,7 @@ const server = http.createServer(async (req, res) => {
     }
     catch(err) {
       console.error(`Server error: ${err}`)
-      return JSONView.errorRender(res, 500, 'Server error')
+      return JSONView.renderError(res, 500, 'Server error')
     }
   }
   next()

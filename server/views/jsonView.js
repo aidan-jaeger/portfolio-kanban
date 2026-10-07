@@ -4,10 +4,12 @@ const JSONView = {
     res.writeHead(statusCode, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify(data))
   },
-
   // Format error payloads uniformly
-  renderError: (res, statusCode, message) => {
-    res.writeHead(statusCode, { 'Content-Type': 'application/json' })
+  renderError: (res, statusCode, message, allowedMethods) => {
+    res.writeHead(statusCode, { 
+      'Content-Type': 'application/json',
+      'Allow': allowedMethods.join(', ')
+    })
     res.end(JSON.stringify({ error: message }))
   }
 }

@@ -1,6 +1,6 @@
 import http from 'node:http'
 import router from './router.js'
-import JsonView from './views/jsonView.js'
+import JSONView from './views/jsonView.js'
 
 const PORT = process.env.PORT || 3500
 
@@ -19,7 +19,7 @@ const server = http.createServer(async (req, res) => {
   //scoped in createServer to isolate execution state per request
   async function next() {
     if (index >= middlewares.length)
-      return JsonView(res, 404, 'Resource Not Found')
+      return JSONView.render(res, 404, 'Resource Not Found')
 
     const currentMiddleware = middlewares[index++]
     try {
@@ -27,7 +27,7 @@ const server = http.createServer(async (req, res) => {
     }
     catch(err) {
       console.error(`Server error: ${err}`)
-      //error view here
+      return JSONView.errorRender(res, 500, 'Server error')
     }
   }
   next()

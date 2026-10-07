@@ -6,10 +6,16 @@ export const JSONView = {
   },
   // Format error payloads uniformly
   renderError: (res, statusCode, message, allowedMethods) => {
-    res.writeHead(statusCode, { 
-      'Content-Type': 'application/json',
-      'Allow': allowedMethods.join(', ')
-    })
+    if (allowedMethods) {
+      res.writeHead(statusCode, { 
+        'Content-Type': 'application/json',
+        'Allow': allowedMethods.join(', ')
+      })
+    } else {
+      res.writeHead(statusCode, { 
+        'Content-Type': 'application/json',
+      })
+    }
     res.end(JSON.stringify({ error: message }))
   }
 }

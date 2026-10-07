@@ -6,6 +6,7 @@ export function router(req, res, next) {
   const method = req.method
   const idProvided = url.match(/\/api\/users\/([\w]+)/)
 
+  console.log('routing...')
   if (url === '/api/users') {
     if (method === 'GET') {
       return idProvided

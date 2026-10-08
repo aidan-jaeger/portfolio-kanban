@@ -4,12 +4,16 @@ import { JSONView } from './views/jsonView.js'
 export function router(req, res, next) {
   // const parsedUrl = new URL(req.url, `http://${req.headers.host}`)
   const parsedUrl = new URL(req.url, `http://localhost`)
+  const pathname = 
+    parsedUrl.pathname.endsWith('/') 
+    ? parsedUrl.pathname.slice(0, -1)
+    : parsedUrl.pathname
   const params = parsedUrl.searchParams
   const method = req.method
   const idProvided = params.get('id')
 
-  console.log('routing...', idProvided)
-  if (req.url === '/api/users') {
+  console.log('routing...', pathname)
+  if (pathname === '/api/users') {
     if (method === 'GET') {
       return idProvided
       ?  UserController.read(req, res, idProvided)

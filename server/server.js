@@ -6,13 +6,13 @@ const PORT = process.env.PORT || 3500
 
 const middlewares = [
   //url normalizer
-  (req, res, next) => {
-    if (req.url.endsWith('/') && req.url.length > 1) {
-      res.writeHead(302, { 'Location': req.url.slice(0, -1) })
-      return res.end()
-    }
-    next()
-  },
+  // (req, res, next) => {
+  //   if (req.url.endsWith('/') && req.url.length > 1) {
+  //     res.writeHead(302, { 'Location': req.url.slice(0, -1) })
+  //     return res.end()
+  //   }
+  //   next()
+  // },
   //logger
   (req, res, next) => {
     console.log(`${new Date().toISOString()}\t${req.method}\t${req.url}`)

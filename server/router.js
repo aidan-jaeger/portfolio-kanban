@@ -2,16 +2,18 @@ import { UserController } from './controllers/userController.js'
 import { JSONView } from './views/jsonView.js'
 
 export function router(req, res, next) {
-  const url = req.url
+  // const parsedUrl = new URL(req.url, `http://${req.headers.host}`)
+  const parsedUrl = new URL(req.url, `http://localhost`)
+  const params = parsedUrl.searchParams
   const method = req.method
-  const idProvided = url.split('/').pop()
+  const idProvided = params.get('id')
 
   console.log('routing...', idProvided)
-  if (url === '/api/users') {
+  if (req.url === '/api/users') {
     if (method === 'GET') {
       return idProvided
-      ?  UserController.readAll(req, res, idProvided)
-      :  UserController.read(req, res) 
+      ?  UserController.read(req, res, idProvided)
+      :  UserController.readAll(req, res) 
     }
     if (method === 'POST') {
       return idProvided
@@ -25,13 +27,13 @@ export function router(req, res, next) {
     }
     if (method === 'DELETE') {
       return idProvided
-      ? UserController.delete()
+      ? UserController.delete(req, res, idProvided)
       : JSONView.renderError(res, 400, `ID needed for method ${method}`)
     }
-    console.warn(`Method \"${method}\" not allowed on ${url}`)
+    console.warn(`Method \"${method}\" not allowed on ${req.url}`)
     return JSONView.renderError(
       res, 405, 
-      `Method \"${method}\" not allowed on ${url}`,
+      `Method \"${method}\" not allowed on ${req.url}`,
       ['GET', 'POST', 'PUT', 'DELETE']
       )
   }

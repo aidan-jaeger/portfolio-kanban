@@ -49,7 +49,7 @@ export const UserModel = {
   },
   readAll: async () => {
     const usersJSON = await getUsersJSON()
-    return usersJSON.map(user => delete user[password]) //scrubs the passwords from each user object
+    return usersJSON.map(({ password, ...rest }) => rest) //scrubs the passwords from each user object
   },
   update: async (id, data) => {
     const currentData = await getUsersJSON()

@@ -66,7 +66,7 @@ export const UserModel = {
   delete: async (id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) return null
+    if (userIndex === -1) return null
     
     currentData.splice(userIndex, 1)
     await atomicWriteJSON(currentData)

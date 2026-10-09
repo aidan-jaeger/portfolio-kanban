@@ -19,12 +19,12 @@ export const UserController = {
 
     const hashedPassword = await hashPassword(password)
     const user = await UserModel.create({ name, email, hashedPassword }, id)
-    return JSONView.render(user)
+    return JSONView.render(user.result)
   },
   read: async (req, res, id) => {
     const user = await UserModel.read(id)
-    if (user) {
-      JSONView.render(res, 200, user)
+    if (user.result) {
+      JSONView.render(res, 200, user.result)
     }
     else {
       console.warn(`No user found with ID ${id}`)
@@ -33,7 +33,7 @@ export const UserController = {
   },
   readAll: async (req, res) => {
     const users = await UserModel.readAll()
-    if (users) {
+    if (users.result) {
       JSONView.render(res, 200, users)
     }
     else {
@@ -53,7 +53,7 @@ export const UserController = {
 
     password = hashPassword(password)
     const user = await UserModel.update(updateData, id)
-    return JSONView.render(user)
+    return JSONView.render(user.result)
   },
   delete: async (req, res, id) => {
     if (await UserModel.delete(id)) {

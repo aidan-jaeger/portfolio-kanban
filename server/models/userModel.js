@@ -60,7 +60,11 @@ export const UserModel = {
   update: async (data, id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) return { result: null, reason: `No user with ID "${id}" found` }
+
+    if (userIndex === -1) 
+      return { result: null, reason: `No user with ID "${id}" found` }
+    if (currentData.some(user => user.email === data.email))
+      return { result: null, reason: 'A user with the email provided already exists' }
     
     const oldData = currentData[userIndex]
     const newData = { ...oldData, ...data, id: id }

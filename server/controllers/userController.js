@@ -5,8 +5,11 @@ import { hashPassword, verifyPassword } from '../utils/hashVerify.js'
 
 export const UserController = {
   create: async (req, res, id) => {
-    const reqBody = await parseReqBody(req)
-    const { name, email, password } = reqBody
+    const body = await parseReqBody(req)
+    if (typeof body === 'string') return JSONView.renderError('Invalid JSON syntax')
+
+    const { name, email } = body
+    let { password } = body
 
     if (!name || !email || !password) {
       console.warn('A name, email, and password must be supplied')
@@ -17,8 +20,8 @@ export const UserController = {
       return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
     }
 
-    const hashedPassword = await hashPassword(password)
-    const user = await UserModel.create({ name, email, hashedPassword }, id)
+    password = await hashPassword(password)
+    const user = await UserModel.create({ name, email, password }, id)
 
     console.log(`result: ${user.result}\nreason: ${user.reason}`)
     
@@ -45,20 +48,24 @@ export const UserController = {
     : JSONView.renderError(res, 404, users.reason) //no users in database
   },
   update: async (req, res, id) => {
-    const body = parseReqBody(req)
+    const body = await parseReqBody(req)
+    if (typeof body === 'string') return JSONView.renderError('Invalid JSON syntax')
+
     const updateData = {}
     if (body.name && body.name.trim() !== '') updateData.name = body.name
     if (body.email && body.email.trim() !== '') updateData.email = body.email
     if (body.password && body.password.trim() !== '') updateData.password = body.password
     
-    if (password.length() < 8) {
-      console.warn('Password must be at least 8 characters in length')
-      return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
+    if (updateData.password) {
+      if (updateData.password.length < 8) {
+        console.warn('Password must be at least 8 characters in length')
+        return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
+      }
+      updateData.password = await hashPassword(updateData.password)
     }
-
-    updateData.password = hashPassword(updateData.password)
     const user = await UserModel.update(updateData, id)
 
+    console.log('update data: ', updateData)
     console.log(`result: ${user.result}\nreason: ${user.reason}`)
 
     return user.result
@@ -70,7 +77,7 @@ export const UserController = {
     console.log(`result: ${deletion.result}\nreason: ${deletion.reason}`)
 
     return deletion.result
-    ? JSONView.render(res, 200, deletion.result)
+    ? JSONView.render(res, 200, 'User deleted')
     : JSONView.renderError(res, 404, deletion.reason) //no user found with id
   }
 }

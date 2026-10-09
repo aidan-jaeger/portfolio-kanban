@@ -10,7 +10,7 @@ export const UserController = {
 
     if (!name || !email || !password) {
       console.warn('A name, email, and password must be supplied')
-      return JSONView.renderError(res, 400, 'An email and password must be supplied')
+      return JSONView.renderError(res, 400, 'A name, email, and password must be supplied')
     }
     if (password.length < 8) {
       console.warn('Password must be at least 8 characters in length')
@@ -19,7 +19,8 @@ export const UserController = {
 
     const hashedPassword = await hashPassword(password)
     const user = await UserModel.create({ name, email, hashedPassword }, id)
-    return JSONView.render(user.result)
+    console.log(user.result, user.reason)
+    return JSONView.render(res, 200, user.result)
   },
   read: async (req, res, id) => {
     const user = await UserModel.read(id)
@@ -53,7 +54,7 @@ export const UserController = {
 
     password = hashPassword(password)
     const user = await UserModel.update(updateData, id)
-    return JSONView.render(user.result)
+    return JSONView.render(res, 200, user.result)
   },
   delete: async (req, res, id) => {
     if (await UserModel.delete(id)) {

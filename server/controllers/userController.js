@@ -4,8 +4,9 @@ import { JSONView } from '../views/jsonView.js'
 import { hashPassword, verifyPassword } from '../utils/hashVerify.js'
 
 export const UserController = {
-  create: async (req, res) => {
-    const { name, email, password } = parseReqBody(req)
+  create: async (req, res, id) => {
+    const reqBody = await parseReqBody(req)
+    const { name, email, password } = reqBody
 
     if (!name || !email || !password) {
       console.warn('A name, email, and password must be supplied')

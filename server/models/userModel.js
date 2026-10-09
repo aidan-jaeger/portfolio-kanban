@@ -32,7 +32,6 @@ async function atomicWriteJSON(data) {
     throw err;
   }
 }
-//really need to add different returns for different fail states
 export const UserModel = {
   create: async (data, id) => {
     //assemble the data in memory
@@ -41,7 +40,7 @@ export const UserModel = {
     currentData = currentData.filter(user => user.id !== id)
 
     if (currentData.some(user => user.email === newUser.email)) {
-      return { result: null, reason: 'email conflict' }
+      return { result: null, reason: 'A user with the email provided already exists' }
     }
 
     currentData.push(newUser)
@@ -51,17 +50,17 @@ export const UserModel = {
   read: async (id) => {
     const currentData = await getUsersJSON()
     const result = currentData.find(user => user.id === id)
-    return result ? { result: result } : { result: null, reason: 'id not found' }
+    return result ? { result: result } : { result: null, reason: `No user with ID "${id}" found` }
   },
   readAll: async () => {
     const usersJSON = await getUsersJSON()
     const result = usersJSON.map(({ password, ...rest }) => rest) //scrubs the passwords from each user object
-    return result ? { result: result } : { result: false, reason: 'no data' }
+    return result ? { result: result } : { result: false, reason: 'No users found in database' }
   },
   update: async (data, id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) return { result: null, reason: 'id not found' }
+    if (userIndex !== -1) return { result: null, reason: `No user with ID "${id}" found` }
     
     const oldData = currentData[userIndex]
     const newData = { ...oldData, ...data, id: id }
@@ -73,7 +72,7 @@ export const UserModel = {
   delete: async (id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex === -1) return { result: null, reason: 'id not found' }
+    if (userIndex === -1) return { result: null, reason: `No user with ID "${id}" found` }
     
     currentData.splice(userIndex, 1)
     await atomicWriteJSON(currentData)

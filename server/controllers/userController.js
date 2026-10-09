@@ -19,50 +19,58 @@ export const UserController = {
 
     const hashedPassword = await hashPassword(password)
     const user = await UserModel.create({ name, email, hashedPassword }, id)
-    console.log(user.result, user.reason)
-    return JSONView.render(res, 200, user.result)
+
+    console.log(`result: ${user.result}\nreason: ${user.reason}`)
+    
+    return user.result
+    ? JSONView.render(res, 200, user.result)
+    : JSONView.renderError(res, 409, user.result) //email already assigned
   },
   read: async (req, res, id) => {
     const user = await UserModel.read(id)
-    if (user.result) {
-      JSONView.render(res, 200, user.result)
-    }
-    else {
-      console.warn(`No user found with ID ${id}`)
-      JSONView.renderError(res, 404, 'No user found with given ID')
-    }
+
+    console.log(`result: ${user.result}\nreason: ${user.reason}`)
+
+    return user.result
+    ? JSONView.render(res, 200, user.result)
+    : JSONView.renderError(res, 404, user.result) //no user with id specified
   },
   readAll: async (req, res) => {
     const users = await UserModel.readAll()
-    if (users.result) {
-      JSONView.render(res, 200, users)
-    }
-    else {
-      console.warn('No users dound in database.')
-      JSONView.renderError(res, 404, 'No users dound in database.')
-    }
+
+    console.log(`result: ${users.result}\nreason: ${users.reason}`)
+
+    return users.result
+    ? JSONView.render(res, 200, users.result)
+    : JSONView.renderError(res, 404, users.result) //no users in database
   },
   update: async (req, res, id) => {
     const body = parseReqBody(req)
     const updateData = {}
     if (body.name && body.name.trim() !== '') updateData.name = body.name
+    if (body.email && body.email.trim() !== '') updateData.email = body.email
+    if (body.password && body.password.trim() !== '') updateData.password = body.password
     
     if (password.length() < 8) {
       console.warn('Password must be at least 8 characters in length')
       return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
     }
 
-    password = hashPassword(password)
+    updateData.password = hashPassword(updateData.password)
     const user = await UserModel.update(updateData, id)
-    return JSONView.render(res, 200, user.result)
+
+    console.log(`result: ${user.result}\nreason: ${user.reason}`)
+
+    return user.result
+    ? JSONView.render(res, 200, user.result)
+    : JSONView.renderError(res, 409, user.result) //email conflict
   },
   delete: async (req, res, id) => {
-    if (await UserModel.delete(id)) {
-      JSONView.render(res, 200, `User deleted: ${id}`)
-    }
-    else {
-      console.warn(`No user found with ID ${id}`)
-      JSONView.renderError(res, 404, 'No user found with given ID')
-    }
+    const deletion = await UserModel.delete(id)
+    console.log(`result: ${deletion.result}\nreason: ${deletion.reason}`)
+
+    return deletion.result
+    ? JSONView.render(res, 200, deletion.result)
+    : JSONView.renderError(res, 404, deletion.result) //no user found with id
   }
 }

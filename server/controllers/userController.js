@@ -1,5 +1,5 @@
 import { parseReqBody } from '../utils/parseReqBody.js'
-import { UserModel } from '../models/fdfdsafasd.js'
+import { UserModel } from '../models/userModel.js'
 import { JSONView } from '../views/jsonView.js'
 import { hashPassword, verifyPassword } from '../utils/hashVerify.js'
 

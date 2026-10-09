@@ -24,7 +24,7 @@ export const UserController = {
     
     return user.result
     ? JSONView.render(res, 200, user.result)
-    : JSONView.renderError(res, 409, user.result) //email already assigned
+    : JSONView.renderError(res, 409, user.reason) //email already assigned
   },
   read: async (req, res, id) => {
     const user = await UserModel.read(id)
@@ -33,7 +33,7 @@ export const UserController = {
 
     return user.result
     ? JSONView.render(res, 200, user.result)
-    : JSONView.renderError(res, 404, user.result) //no user with id specified
+    : JSONView.renderError(res, 404, user.reason) //no user with id specified
   },
   readAll: async (req, res) => {
     const users = await UserModel.readAll()
@@ -42,7 +42,7 @@ export const UserController = {
 
     return users.result
     ? JSONView.render(res, 200, users.result)
-    : JSONView.renderError(res, 404, users.result) //no users in database
+    : JSONView.renderError(res, 404, users.reason) //no users in database
   },
   update: async (req, res, id) => {
     const body = parseReqBody(req)
@@ -63,7 +63,7 @@ export const UserController = {
 
     return user.result
     ? JSONView.render(res, 200, user.result)
-    : JSONView.renderError(res, 409, user.result) //email conflict
+    : JSONView.renderError(res, 409, user.reason) //email conflict
   },
   delete: async (req, res, id) => {
     const deletion = await UserModel.delete(id)
@@ -71,6 +71,6 @@ export const UserController = {
 
     return deletion.result
     ? JSONView.render(res, 200, deletion.result)
-    : JSONView.renderError(res, 404, deletion.result) //no user found with id
+    : JSONView.renderError(res, 404, deletion.reason) //no user found with id
   }
 }

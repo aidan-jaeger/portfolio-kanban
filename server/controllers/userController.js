@@ -17,8 +17,8 @@ export const UserController = {
       return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
     }
 
-    password = hashPassword(password)
-    const user = await UserModel.create({ name, email, password })
+    const hashedPassword = await hashPassword(password)
+    const user = await UserModel.create({ name, email, hashedPassword }, id)
     return JSONView.render(user)
   },
   read: async (req, res, id) => {
@@ -42,7 +42,9 @@ export const UserController = {
     }
   },
   update: async (req, res, id) => {
-    const { name = '', email = '', password = ''} = parseReqBody(req)
+    const body = parseReqBody(req)
+    const updateData = {}
+    if (body.name && body.name.trim() !== '') updateData.name = body.name
     
     if (password.length() < 8) {
       console.warn('Password must be at least 8 characters in length')
@@ -50,7 +52,7 @@ export const UserController = {
     }
 
     password = hashPassword(password)
-    const user = await UserModel.update({ name, email, password })
+    const user = await UserModel.update(updateData, id)
     return JSONView.render(user)
   },
   delete: async (req, res, id) => {

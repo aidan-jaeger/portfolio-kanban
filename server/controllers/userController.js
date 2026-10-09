@@ -12,7 +12,7 @@ export const UserController = {
       console.warn('A name, email, and password must be supplied')
       return JSONView.renderError(res, 400, 'An email and password must be supplied')
     }
-    if (password.length() < 8) {
+    if (password.length < 8) {
       console.warn('Password must be at least 8 characters in length')
       return JSONView.renderError(res, 400, 'Password must be at least 8 characters in length')
     }

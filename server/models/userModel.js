@@ -41,40 +41,42 @@ export const UserModel = {
     currentData = currentData.filter(user => user.id !== id)
 
     if (currentData.some(user => user.email === newUser.email)) {
-      return null
+      return { result: null, reason: 'email conflict' }
     }
 
     currentData.push(newUser)
     await atomicWriteJSON(currentData)
-    return newUser
+    return { result: newUser }
   },
   read: async (id) => {
     const currentData = await getUsersJSON()
-    return currentData.find(user => user.id === id) || null
+    const result = currentData.find(user => user.id === id)
+    return result ? { result: result } : { result: null, reason: 'id not found' }
   },
   readAll: async () => {
     const usersJSON = await getUsersJSON()
-    return usersJSON.map(({ password, ...rest }) => rest) //scrubs the passwords from each user object
+    const result = usersJSON.map(({ password, ...rest }) => rest) //scrubs the passwords from each user object
+    return result ? { result: result } : { result: false, reason: 'no data' }
   },
   update: async (data, id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex !== -1) return null
+    if (userIndex !== -1) return { result: null, reason: 'id not found' }
     
     const oldData = currentData[userIndex]
     const newData = { ...oldData, ...data, id: id }
     currentData[userIndex] = newData
 
     await atomicWriteJSON(currentData)
-    return true
+    return { result: newData }
   },
   delete: async (id) => {
     const currentData = await getUsersJSON()
     const userIndex = currentData.findIndex(user => user.id === id)
-    if (userIndex === -1) return null
+    if (userIndex === -1) return { result: null, reason: 'id not found' }
     
     currentData.splice(userIndex, 1)
     await atomicWriteJSON(currentData)
-    return true
+    return { result: true }
   },
 }
